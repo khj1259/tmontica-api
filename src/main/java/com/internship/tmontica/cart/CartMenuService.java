@@ -33,6 +33,8 @@ public class CartMenuService {
     private final OptionDao optionDao;
     private final MenuDao menuDao;
     private final JwtService jwtService;
+    static final String SLASH = "/";
+    static final String UNDER_BAR = "__";
 
     // 카트 정보 가져오기 api
     public CartResponse getCartMenuApi(){
@@ -164,9 +166,9 @@ public class CartMenuService {
     public String convertOptionStringToCli(String option){
         //메뉴 옵션 "1__1/4__2" => "HOT/샷추가(2개)" 로 바꾸는 작업
         StringBuilder convert = new StringBuilder();
-        String[] arrOption = option.split("/");
+        String[] arrOption = option.split(SLASH);
         for (String opStr : arrOption) {
-            String[] oneOption = opStr.split("__");
+            String[] oneOption = opStr.split(UNDER_BAR);
             Option tmpOption = optionDao.getOptionById(Integer.parseInt(oneOption[0]));
 
             // 각각의 enum값에 맞는 메서드를 구현?
