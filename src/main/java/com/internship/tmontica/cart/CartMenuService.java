@@ -8,7 +8,6 @@ import com.internship.tmontica.cart.model.request.CartUpdateRequest;
 import com.internship.tmontica.cart.model.response.CartIdResponse;
 import com.internship.tmontica.cart.model.response.CartMenusResponse;
 import com.internship.tmontica.cart.model.response.CartResponse;
-import com.internship.tmontica.menu.CategoryName;
 import com.internship.tmontica.menu.Menu;
 import com.internship.tmontica.menu.MenuDao;
 import com.internship.tmontica.option.Option;
@@ -33,8 +32,10 @@ public class CartMenuService {
     private final OptionDao optionDao;
     private final MenuDao menuDao;
     private final JwtService jwtService;
-    static final String SLASH = "/";
-    static final String UNDER_BAR = "__";
+    private static final String SLASH = "/";
+    private static final String UNDER_BAR = "__";
+    private static final String imgUrlPrefix = "/images/";
+
 
     // 카트 정보 가져오기 api
     public CartResponse getCartMenuApi(){
@@ -67,7 +68,7 @@ public class CartMenuService {
 
             // List<CartMenusResponse> 에 넣기
             CartMenusResponse cartMenusResponse = new CartMenusResponse(cartMenu.getId(), cartMenu.getMenuId(), menu.getNameEng(),
-                                                                menu.getNameKo(),"/images/".concat(menu.getImgUrl()), option ,
+                                                                menu.getNameKo(),imgUrlPrefix.concat(menu.getImgUrl()), option ,
                                                                 cartMenu.getQuantity(), price, menu.getStock());
             menus.add(cartMenusResponse);
 
@@ -144,8 +145,7 @@ public class CartMenuService {
             throw new NotEnoughStockException(id, StockExceptionType.NOT_ENOUGH_STOCK);
         }
 
-        int result = cartMenuDao.updateCartMenuQuantity(id, cartUpdateRequest.getQuantity());
-        return result;
+        return cartMenuDao.updateCartMenuQuantity(id, cartUpdateRequest.getQuantity());
     }
 
     // 카트 삭제하기 api

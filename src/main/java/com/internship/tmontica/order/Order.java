@@ -1,5 +1,7 @@
 package com.internship.tmontica.order;
 
+import com.internship.tmontica.order.exception.OrderException;
+import com.internship.tmontica.order.exception.OrderExceptionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,5 +44,13 @@ public class Order {
         this.status = status;
         this.userId = userId;
         this.userAgent = userAgent;
+    }
+
+
+    // 취소 가능한 상태인지 체크하는 메서드
+    public boolean cancelable(){
+        // 주문 상태가 '미결제' 나 '결제완료' 상태가 아니면 false
+        return (!this.status.equals(OrderStatusType.BEFORE_PAYMENT.getStatus())
+                && !this.status.equals(OrderStatusType.AFTER_PAYMENT.getStatus()));
     }
 }

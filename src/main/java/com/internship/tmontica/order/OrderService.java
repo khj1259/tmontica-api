@@ -45,6 +45,7 @@ public class OrderService {
     private final PointDao pointDao;
     private final JwtService jwtService;
     private final CartMenuService cartMenuService;
+    private static final String imgUrlPrefix = "/images/";
 
 
     // 주문내역 가져오기 api
@@ -68,9 +69,7 @@ public class OrderService {
             orderListResponses.add(orderListResponse);
         }
 
-        OrderListByUserIdResponse orderListByUserIdResponse = new OrderListByUserIdResponse(totalCnt, orderListResponses);
-
-        return orderListByUserIdResponse;
+        return new OrderListByUserIdResponse(totalCnt, orderListResponses);
     }
 
 
@@ -177,12 +176,10 @@ public class OrderService {
             }
 
             // imgUrl 경로 설정
-            menu.setImgUrl("/images/".concat(menu.getImgUrl()));
+            menu.setImgUrl(imgUrlPrefix.concat(menu.getImgUrl()));
         }
 
-        OrderResponse orderResponse = new OrderResponse(orderId, order.getPayment(), order.getStatus(), order.getTotalPrice(),
-                order.getRealPrice(), order.getUsedPoint(), order.getOrderDate(), menus);
-        return orderResponse;
+        return new OrderResponse(orderId, order, menus);
     }
 
 
@@ -198,9 +195,8 @@ public class OrderService {
         }
 
 
-        // 주문 상태가 '미결제' 나 '결제완료' 상태가 아니면 예외처리
-        if(!order.getStatus().equals(OrderStatusType.BEFORE_PAYMENT.getStatus())
-                && !order.getStatus().equals(OrderStatusType.AFTER_PAYMENT.getStatus())){
+        // 취소가능한 상태가 아니면 예외처리
+        if(order.cancelable()){
             throw new OrderException(OrderExceptionType.CANNOT_CANCEL_ORDER);
         }
 
